@@ -1,0 +1,136 @@
+package de.uni_stuttgart.yi.task1positionlogger;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.util.Log;
+import android.widget.Toast;
+
+public class PositionLoggerService extends Service {
+	private final String TAG = "PositionLoggerService";
+	private LocationManager locationManager;
+	private String locationProvider;
+	private double longitude;
+	private double latitude;
+	private double distance;
+	private double speed;
+	private Calendar timeServiceStarted;
+	private File gpsFile;
+	private BufferedWriter out;
+	
+	@Override
+	public void onCreate() {
+	}
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		timeServiceStarted = Calendar.getInstance();
+		distance = 0;//make distance to zero at the beginning
+		Toast.makeText(this, "service is started", Toast.LENGTH_SHORT).show();
+		//log file
+		File sdDir = Environment.getExternalStorageDirectory();
+    	gpsFile = new File(sdDir, "gps_data.txt");
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    	locationProvider = LocationManager.GPS_PROVIDER;
+    	LocationListener locationListener = new LocationListener() {
+			@Override
+			public void onLocationChanged(Location location) {
+				double oldLongitude = longitude;
+				double oldLatitude = latitude;
+				longitude = location.getLongitude();
+				latitude = location.getLatitude();
+				//initial case here
+				if (oldLongitude == 0 && oldLatitude == 0) {
+					oldLongitude = longitude;
+					oldLatitude = latitude;
+				}
+				distance = distance + computeDistance(oldLongitude, oldLatitude, longitude, latitude);
+				Calendar rightNow = Calendar.getInstance();
+				speed = computeAvgSpeed(distance, rightNow);
+				String locationString = longitude + ", " + latitude;
+				try {
+	            	DateFormat format = DateFormat.getDateTimeInstance();
+	            	String time_rightNow = format.format(rightNow.getTime());
+	            	out = new BufferedWriter(new FileWriter(gpsFile));
+	            	out.append(time_rightNow + " " + locationString + "\n");
+	            	out.close();
+	    		} catch (IOException e) {
+	    			Log.d(TAG, "Could not write to SD card: " + e.getMessage());
+	    		}
+			}
+
+			@Override
+			public void onProviderDisabled(String provider) {
+			}
+
+			@Override
+			public void onProviderEnabled(String provider) {
+			}
+
+			@Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+			}
+    	};
+    	locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+    	
+		return 0;
+	}
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		return mBinder;
+	}
+	
+	@Override
+	public void onDestroy() {
+		locationManager.removeUpdates(listener);
+	}
+	
+	private final IPositionLoggerService.Stub mBinder = new IPositionLoggerService.Stub() {
+		@Override
+		public String getLocation() throws RemoteException {
+        	return longitude + " " + latitude;
+		}
+
+		@Override
+		public String getDistance() throws RemoteException {
+			return distance + "m";
+		}
+
+		@Override
+		public String getAverageSpeed() throws RemoteException {
+			return speed + "m/s";
+		}
+    };
+
+    private double computeDistance(double long1, double lat1, double long2, double lat2) {
+    	double r = 6371;//earth radius (km)
+    	double dLng = Math.toRadians(long1 - long2);
+    	double dLat = Math.toRadians(lat1 - lat2);
+    	double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    			   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLng/2) * Math.sin(dLng/2);
+    	double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    	double dist = r * c;
+    	return dist;
+    }
+    
+    private double computeAvgSpeed(double distance, Calendar rightNow) {
+    	long timeDiff = rightNow.getTimeInMillis() - timeServiceStarted.getTimeInMillis();
+    	return distance * 1000.0 / timeDiff;
+    }
+}

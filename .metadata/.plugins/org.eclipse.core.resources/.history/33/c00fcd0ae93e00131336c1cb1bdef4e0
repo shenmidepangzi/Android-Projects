@@ -1,0 +1,57 @@
+package de.uni_stuttgart.yi.task1positionlogger;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+
+public class MainActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		//set all button actions here
+		//start service button
+		Button startServiceButton = (Button) findViewById(R.id.start_service_button);
+		startServiceButton.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		        // Do something in response to button click
+		    }
+		});
+		
+		//stop service button
+		Button stopServiceButton = (Button) findViewById(R.id.stop_service_button);
+		stopServiceButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				// Do something in response to button click
+			}
+		});
+		
+		//update values button
+		Button updateValuesButton = (Button) findViewById(R.id.update_values_button);
+		updateValuesButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				// Do something in response to button click
+			}
+		});
+		
+		//exit button
+		Button exitButton = (Button) findViewById(R.id.exit_button);
+		exitButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				// Do something in response to button click
+			}
+		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+}

@@ -1,0 +1,20 @@
+Group #3
+
+Cui, Yi
+Zhang, Weiliang
+Nuessle, Steffen
+Wadi, Ahmed
+
+All the files we have implemented:
+	
+	src/
+		MainActivity.java
+		PositionLoggerService.java
+		IPositionLoggerService.aidl
+		
+	res/layout
+		activity_main.xml
+	res/values
+		strings.xml
+		
+	AndroidManifest.xml

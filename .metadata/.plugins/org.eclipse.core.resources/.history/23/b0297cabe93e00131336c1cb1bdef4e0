@@ -1,0 +1,6 @@
+package de.uni_stuttgart.yi.task1positionlogger;
+
+interface ICalculatorService {
+	double add(double x, double y);
+	String getPosition();
+}
