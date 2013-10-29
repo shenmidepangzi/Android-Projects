@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy element &apos;ICalculatorService.aidl&apos; to &apos;TestClient/src/yi.cui.testservice&apos;&#x0A;- Original project: &apos;TestService&apos;&#x0A;- Destination element: &apos;TestClient/src/yi.cui.testservice&apos;&#x0A;- Original element: &apos;ICalculatorService.aidl&apos;" description="Copy file" destination="=TestClient/src&lt;yi.cui.testservice" element1="src/yi/cui/testservice/ICalculatorService.aidl" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1382703585973" units="0" version="1.0"/>
-</session>

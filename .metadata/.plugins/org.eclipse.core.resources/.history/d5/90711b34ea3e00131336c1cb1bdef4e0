@@ -1,8 +1,0 @@
-package de.uni_stuttgart.yi.task1positionlogger;
-
-interface IPostionLoggerService {
-	String getLatitude();
-	String getLongitude();
-	String getDistance();
-	String getAverageSpeed();
-}
